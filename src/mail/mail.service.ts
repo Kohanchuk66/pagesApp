@@ -15,7 +15,7 @@ export class MailService {
       subject: 'Confirm your Email',
       template: './confirmation',
       context: {
-        name: user.username,
+        name: user.firstName,
         url,
       },
     });
@@ -30,7 +30,7 @@ export class MailService {
       subject: 'Change your Password',
       template: './changePassword',
       context: {
-        name: user.username,
+        name: user.firstName,
         url,
       },
     });
