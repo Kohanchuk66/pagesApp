@@ -2,7 +2,6 @@ import * as mongoose from 'mongoose';
 import * as bcrypt from 'bcrypt';
 
 export const UserSchema = new mongoose.Schema({
-  username: String,
   password: String,
   lastName: String,
   firstName: String,

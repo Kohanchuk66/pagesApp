@@ -19,17 +19,8 @@ export class UsersService {
   }
 
   async create(userDTO: RegisterDTO): Promise<User> {
-    const { username, email } = userDTO;
-    const user = await this.userModel.findOne({
-      username: new RegExp(username, 'i'),
-    });
+    const { email } = userDTO;
     const userWithSameEmail = await this.userModel.findOne({ email });
-    const regExp = new RegExp('\\w+\\d+');
-    if (user)
-      throw new HttpException(
-        'User with same username already exists',
-        HttpStatus.BAD_REQUEST,
-      );
     if (userWithSameEmail)
       throw new HttpException(
         'User with same email already exists',
@@ -74,8 +65,8 @@ export class UsersService {
   }
 
   async findByPayload(payload): Promise<Record<string, any>> {
-    const { username } = payload;
-    return this.userModel.findOne({ username });
+    const { firstName } = payload;
+    return this.userModel.findOne({ firstName });
   }
 
   async findByEmail(email): Promise<User> {

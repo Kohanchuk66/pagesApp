@@ -6,7 +6,6 @@ export interface LoginDTO {
 }
 
 export class RegisterDTO {
-  username: string;
   @Exclude()
   password: string;
   firstName: string;

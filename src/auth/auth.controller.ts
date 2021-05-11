@@ -46,7 +46,7 @@ export class AuthController {
   async login(@Body() userDTO: LoginDTO): Promise<Record<string, any>> {
     const user = await this.userService.findByLogin(userDTO);
     const payload = {
-      username: user.username,
+      firstName: user.firstName,
       lastName: user.lastName,
     };
 
@@ -74,7 +74,7 @@ export class AuthController {
 
     const user = await this.userService.create(userDTO);
     const payload = {
-      username: user.username,
+      firstName: user.firstName,
       lastName: user.lastName,
     };
 

@@ -4,7 +4,6 @@ import { Exclude } from 'class-transformer';
 export class User extends Document {
   passwordResetToken: string;
   passwordResetExpires: number;
-  username: string;
   firstName: string;
   @Exclude()
   password: string;
