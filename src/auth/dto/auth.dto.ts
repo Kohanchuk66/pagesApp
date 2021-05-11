@@ -11,7 +11,5 @@ export class RegisterDTO {
   password: string;
   firstName: string;
   lastName: string;
-  city: string;
   email: string;
-  avatar?: string;
 }

@@ -6,8 +6,6 @@ export const UserSchema = new mongoose.Schema({
   password: String,
   lastName: String,
   firstName: String,
-  city: String,
-  avatar: String,
   email: {
     type: String,
     unique: true,

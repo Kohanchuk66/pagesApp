@@ -9,8 +9,6 @@ export class User extends Document {
   @Exclude()
   password: string;
   lastName: string;
-  city: string;
-  avatar: string;
   email: string;
   confirmed: boolean;
 }

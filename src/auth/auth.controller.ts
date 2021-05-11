@@ -48,7 +48,6 @@ export class AuthController {
     const payload = {
       username: user.username,
       lastName: user.lastName,
-      city: user.city,
     };
 
     const token = await this.authService.signPayload(payload);
@@ -58,30 +57,7 @@ export class AuthController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('register')
-  @UseInterceptors(
-    FileInterceptor('avatar', {
-      storage: diskStorage({
-        destination: './avatars',
-        filename: (req, file, cb) => {
-          const newName = uniqid() + '_' + file.originalname;
-          return cb(null, newName);
-        },
-      }),
-      fileFilter: (req, file, cb) => {
-        const allowedTypes = ['png', 'jpg', 'gif', 'jpeg'];
-        const type = file.mimetype.split('/')[1];
-
-        if (!allowedTypes.includes(type))
-          cb(new HttpException('No image', HttpStatus.BAD_REQUEST), false);
-
-        cb(null, true);
-      },
-    }),
-  )
-  async register(
-    @Body() userDTO: RegisterDTO,
-    @UploadedFile() file,
-  ): Promise<Record<string, any>> {
+  async register(@Body() userDTO: RegisterDTO): Promise<Record<string, any>> {
     const containsNumbers = /^.*\d+.*$/;
     const containsLetters = /^.*[a-zA-Z]+.*$/;
     if (!containsNumbers.test(userDTO.password))
@@ -96,12 +72,10 @@ export class AuthController {
         HttpStatus.BAD_REQUEST,
       );
 
-    userDTO.avatar = file.filename === undefined ? 'No image' : file.filename;
     const user = await this.userService.create(userDTO);
     const payload = {
       username: user.username,
       lastName: user.lastName,
-      city: user.city,
     };
 
     const resetToken = crypto.randomBytes(32).toString('hex');
