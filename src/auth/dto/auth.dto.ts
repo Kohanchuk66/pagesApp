@@ -1,7 +1,7 @@
 import { Exclude } from 'class-transformer';
 
 export interface LoginDTO {
-  username: string;
+  email: string;
   password: string;
 }
 

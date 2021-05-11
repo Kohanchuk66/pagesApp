@@ -35,6 +35,26 @@ export class UsersService {
         'User with same email already exists',
         HttpStatus.BAD_REQUEST,
       );
+    const onlyLetters = /^[a-zA-Z]+$/;
+    const firstUpperLetter = /^[A-Z]/;
+    if (
+      !onlyLetters.test(userDTO.firstName) ||
+      !onlyLetters.test(userDTO.lastName)
+    )
+      throw new HttpException(
+        'First name and last name must contain only letters',
+        HttpStatus.BAD_REQUEST,
+      );
+    if (
+      !firstUpperLetter.test(userDTO.firstName) ||
+      !firstUpperLetter.test(userDTO.lastName)
+    )
+      throw new HttpException(
+        'First letter in first name and last name must be in upper case',
+        HttpStatus.BAD_REQUEST,
+      );
+    if (userDTO.password.length <= 7)
+      throw new HttpException('Too short password', HttpStatus.BAD_REQUEST);
     const createdUser = new this.userModel(userDTO);
     createdUser.confirmed = false;
     await createdUser.save();
@@ -42,8 +62,8 @@ export class UsersService {
   }
 
   async findByLogin(userDTO: LoginDTO): Promise<User> {
-    const { username, password } = userDTO;
-    const user = await this.userModel.findOne({ username });
+    const { email, password } = userDTO;
+    const user = await this.userModel.findOne({ email });
     if (!user)
       throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
 
