@@ -52,7 +52,7 @@ export class AuthController {
 
     const token = await this.authService.signPayload(payload);
     const responseUser = new responseUserDto(user);
-    return { responseUser, token };
+    return { user: responseUser, token };
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -82,7 +82,7 @@ export class AuthController {
     await this.mailService.sendUserConfirmation(user, resetToken);
     const token = await this.authService.signPayload(payload);
     const responseUser = new responseUserDto(user);
-    return { responseUser, token };
+    return { user: responseUser, token };
   }
 
   @Get('/confirm/:token')
