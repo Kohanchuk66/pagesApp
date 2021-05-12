@@ -94,8 +94,7 @@ export class AuthController {
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
     const user = this.userService.findByResetToken(hashedToken, Date.now());
 
-    setTimeout(() => window.close(), 1000);
-    return 'User confirmed';
+    return 'User confirmed<script>setTimeout(() => window.close(), 2000);</script>';
   }
 
   @Post('/forgotPassword')
