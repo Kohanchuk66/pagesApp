@@ -28,7 +28,7 @@ export class MailService {
   }
 
   async sendChangePasswordEmail(user: User, token: string): Promise<void> {
-    const url = `http://localhost:3000/auth/resetPassword/${token}`;
+    const url = `http://localhost:3000/auth/reset/${token}`;
 
     await this.mailerService.sendMail({
       to: user.email,

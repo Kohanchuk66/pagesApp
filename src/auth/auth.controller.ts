@@ -122,7 +122,7 @@ export class AuthController {
     }
   }
 
-  @Post('/resetPassword/:token')
+  @Post('/reset/:token')
   async resetPassword(
     @Param('token') token: string,
     @Body() changePasswordDto: ChangePasswordDto,

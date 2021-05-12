@@ -119,8 +119,8 @@ export class UsersService {
       firstName: userDTO.firstName,
       lastName: userDTO.lastName,
       email: userDTO.email,
-      fromGoogle: true,
     });
+    user.fromGoogle = true;
     await user.save();
     return user;
   }
