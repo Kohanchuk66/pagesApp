@@ -7,20 +7,22 @@ import {
   HttpStatus,
   Param,
   Post,
+  Req,
   UseGuards,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import { LoginDTO, RegisterDTO } from './dto/auth.dto';
+import { GoogleUserDTO, LoginDTO, RegisterDTO } from './dto/auth.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import * as crypto from 'crypto';
+import * as uniqid from 'uniqid';
 import { MailService } from '../mail/mail.service';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
-import { User } from '../interfaces/user';
 import { responseUserDto } from './dto/response-user.dto';
+import { User } from '../interfaces/user';
 
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -98,7 +100,7 @@ export class AuthController {
     @Body(new ValidationPipe()) forgotPasswordDto: ForgotPasswordDto,
   ): Promise<Record<string, any>> {
     const user = await this.userService.findByEmail(forgotPasswordDto.email);
-
+    if (!user) throw new HttpException('Invalid email', HttpStatus.BAD_REQUEST);
     const resetToken = crypto.randomBytes(32).toString('hex');
     user.passwordResetToken = crypto
       .createHash('sha256')
@@ -132,5 +134,25 @@ export class AuthController {
     );
 
     return this.userService.changePassword(user, changePasswordDto);
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post('googleAuth')
+  async googleLogin(
+    @Body() userDTO: GoogleUserDTO,
+  ): Promise<Record<string, any>> {
+    let user;
+    user = await this.userService.findByEmail(userDTO.email);
+    if (!user) {
+      user = await this.userService.createGoogleUser(userDTO);
+    }
+    const payload = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+    };
+
+    const token = await this.authService.signPayload(payload);
+    const responseUser = new responseUserDto(user);
+    return { user: responseUser, token, message: 'Login successfully' };
   }
 }

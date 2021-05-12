@@ -10,4 +10,5 @@ export class User extends Document {
   lastName: string;
   email: string;
   confirmed: boolean;
+  fromGoogle?: boolean;
 }

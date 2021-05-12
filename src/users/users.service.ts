@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from '../interfaces/user';
-import { LoginDTO, RegisterDTO } from '../auth/dto/auth.dto';
+import { GoogleUserDTO, LoginDTO, RegisterDTO } from '../auth/dto/auth.dto';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { ConfigService } from '@nestjs/config';
@@ -77,7 +77,6 @@ export class UsersService {
 
   async findByEmail(email): Promise<User> {
     const user = await this.userModel.findOne({ email });
-    if (!user) throw new HttpException('Invalid email', HttpStatus.BAD_REQUEST);
 
     return user;
   }
@@ -113,5 +112,16 @@ export class UsersService {
       expiresIn: this.configService.get('JWT_EXPIRES_IN'),
     });
     return { token };
+  }
+
+  async createGoogleUser(userDTO: GoogleUserDTO) {
+    const user = new this.userModel({
+      firstName: userDTO.firstName,
+      lastName: userDTO.lastName,
+      email: userDTO.email,
+      fromGoogle: true,
+    });
+    await user.save();
+    return user;
   }
 }

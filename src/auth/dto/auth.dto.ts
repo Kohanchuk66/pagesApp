@@ -12,3 +12,9 @@ export class RegisterDTO {
   lastName: string;
   email: string;
 }
+
+export class GoogleUserDTO {
+  firstName: string;
+  lastName: string;
+  email: string;
+}
