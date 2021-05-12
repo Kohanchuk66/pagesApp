@@ -106,7 +106,7 @@ export class UsersService {
     user.passwordResetToken = null;
     user.passwordResetExpires = null;
 
-    await user.save();
+    await user.save({ validateBeforeSave: false });
 
     const token = jwt.sign(user._id, this.configService.get('JWT_SECRET'), {
       expiresIn: this.configService.get('JWT_EXPIRES_IN'),
@@ -114,7 +114,7 @@ export class UsersService {
     return { token };
   }
 
-  async createGoogleUser(userDTO: GoogleUserDTO) {
+  async createGoogleUser(userDTO: GoogleUserDTO): Promise<User> {
     const user = new this.userModel({
       firstName: userDTO.firstName,
       lastName: userDTO.lastName,

@@ -12,5 +12,4 @@ export class responseUserDto {
   firstName: string;
   lastName: string;
   email: string;
-  fromGoogle: boolean;
 }

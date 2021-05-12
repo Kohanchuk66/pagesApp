@@ -12,6 +12,7 @@ export const UserSchema = new mongoose.Schema({
   passwordResetToken: String,
   passwordResetExpires: Date,
   confirmed: Boolean,
+  fromGoogle: Boolean,
 });
 
 UserSchema.pre('save', async function (next: mongoose.HookNextFunction) {
