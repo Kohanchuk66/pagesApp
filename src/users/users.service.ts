@@ -87,6 +87,8 @@ export class UsersService {
         HttpStatus.BAD_REQUEST,
       );
 
+    user.confirmed = true;
+
     return user;
   }
 

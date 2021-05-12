@@ -45,6 +45,11 @@ export class AuthController {
   @Post('login')
   async login(@Body() userDTO: LoginDTO): Promise<Record<string, any>> {
     const user = await this.userService.findByLogin(userDTO);
+    if (user.confirmed == false)
+      throw new HttpException(
+        'Your account not confirmed',
+        HttpStatus.BAD_REQUEST,
+      );
     const payload = {
       firstName: user.firstName,
       lastName: user.lastName,
@@ -82,7 +87,7 @@ export class AuthController {
     await this.mailService.sendUserConfirmation(user, resetToken);
     const token = await this.authService.signPayload(payload);
     const responseUser = new responseUserDto(user);
-    return { user: responseUser, token };
+    return { user: responseUser };
   }
 
   @Get('/confirm/:token')
