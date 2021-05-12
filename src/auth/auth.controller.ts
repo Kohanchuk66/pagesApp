@@ -86,7 +86,6 @@ export class AuthController {
     const resetToken = crypto.randomBytes(32).toString('hex');
     await this.mailService.sendUserConfirmation(user, resetToken);
     const token = await this.authService.signPayload(payload);
-    const responseUser = new responseUserDto(user);
     return { message: 'Confirm your registration on email' };
   }
 
@@ -100,7 +99,7 @@ export class AuthController {
   @Post('/forgotPassword')
   async forgotPassword(
     @Body(new ValidationPipe()) forgotPasswordDto: ForgotPasswordDto,
-  ): Promise<string> {
+  ): Promise<Record<string, any>> {
     const user = await this.userService.findByEmail(forgotPasswordDto.email);
 
     const resetToken = crypto.randomBytes(32).toString('hex');
@@ -112,7 +111,7 @@ export class AuthController {
     await user.save({ validateBeforeSave: false });
     try {
       await this.mailService.sendChangePasswordEmail(user, resetToken);
-      return 'Token send to email';
+      return { message: 'Token send to email' };
     } catch (err) {
       user.passwordResetToken = undefined;
       user.passwordResetExpires = undefined;
