@@ -57,7 +57,7 @@ export class AuthController {
 
     const token = await this.authService.signPayload(payload);
     const responseUser = new responseUserDto(user);
-    return { user: responseUser, token };
+    return { user: responseUser, token, message: 'Login successfully' };
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -87,7 +87,7 @@ export class AuthController {
     await this.mailService.sendUserConfirmation(user, resetToken);
     const token = await this.authService.signPayload(payload);
     const responseUser = new responseUserDto(user);
-    return { user: responseUser };
+    return { message: 'Confirm your registration on email' };
   }
 
   @Get('/confirm/:token')
