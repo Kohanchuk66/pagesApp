@@ -1,13 +1,19 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable, Req } from '@nestjs/common';
 import { User } from '../interfaces/user';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class MailService {
-  constructor(private mailerService: MailerService) {}
+  constructor(
+    private mailerService: MailerService,
+    private configService: ConfigService,
+  ) {}
 
   async sendUserConfirmation(user: User, token: string): Promise<void> {
-    const url = `http://localhost:3000/auth/confirm?token=${token}`;
+    const url = `http://localhost:${this.configService.get<string>(
+      'PORT',
+    )}/auth/confirm/${token}`;
 
     await this.mailerService.sendMail({
       to: user.email,
@@ -22,7 +28,9 @@ export class MailService {
   }
 
   async sendChangePasswordEmail(user: User, token: string): Promise<void> {
-    const url = `http://localhost:3000/auth/changePassword?token=${token}`;
+    const url = `http://localhost:${this.configService.get<string>(
+      'PORT',
+    )}/auth/changePassword?token=${token}`;
 
     await this.mailerService.sendMail({
       to: user.email,

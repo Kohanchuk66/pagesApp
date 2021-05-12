@@ -6,6 +6,7 @@ import { LoginDTO, RegisterDTO } from '../auth/dto/auth.dto';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { ConfigService } from '@nestjs/config';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class UsersService {
@@ -18,7 +19,7 @@ export class UsersService {
     return user.depopulate('password');
   }
 
-  async create(userDTO: RegisterDTO): Promise<User> {
+  async create(userDTO: RegisterDTO, resetToken: string): Promise<User> {
     const { email } = userDTO;
     const userWithSameEmail = await this.userModel.findOne({ email });
     if (userWithSameEmail)
@@ -48,6 +49,11 @@ export class UsersService {
       throw new HttpException('Too short password', HttpStatus.BAD_REQUEST);
     const createdUser = new this.userModel(userDTO);
     createdUser.confirmed = false;
+    createdUser.passwordResetToken = crypto
+      .createHash('sha256')
+      .update(resetToken)
+      .digest('hex');
+    createdUser.passwordResetExpires = Date.now() + 10 * 60 * 1000;
     await createdUser.save();
     return this.sanitizeUser(createdUser);
   }
@@ -86,9 +92,10 @@ export class UsersService {
         'Token is invalid or has expired',
         HttpStatus.BAD_REQUEST,
       );
-
     user.confirmed = true;
-
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    user.save({ validateBeforeSave: false });
     return user;
   }
 

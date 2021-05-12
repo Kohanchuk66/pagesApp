@@ -77,23 +77,25 @@ export class AuthController {
         HttpStatus.BAD_REQUEST,
       );
 
-    const user = await this.userService.create(userDTO);
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const user = await this.userService.create(userDTO, resetToken);
     const payload = {
       firstName: user.firstName,
       lastName: user.lastName,
     };
 
-    const resetToken = crypto.randomBytes(32).toString('hex');
     await this.mailService.sendUserConfirmation(user, resetToken);
     const token = await this.authService.signPayload(payload);
-    return { message: 'Confirm your registration on email' };
+    return { message: 'Confirm your email' };
   }
 
   @Get('/confirm/:token')
-  async confirm(@Param('token') token: string): Promise<User> {
+  async confirm(@Param('token') token: string): Promise<string> {
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    const user = this.userService.findByResetToken(hashedToken, Date.now());
 
-    return await this.userService.findByResetToken(hashedToken, Date.now());
+    setTimeout(() => window.close(), 1000);
+    return 'User confirmed';
   }
 
   @Post('/forgotPassword')
