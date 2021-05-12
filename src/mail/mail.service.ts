@@ -28,14 +28,12 @@ export class MailService {
   }
 
   async sendChangePasswordEmail(user: User, token: string): Promise<void> {
-    const url = `http://localhost:${this.configService.get<string>(
-      'PORT',
-    )}/auth/changePassword?token=${token}`;
+    const url = `http://localhost:3000/auth/resetPassword?token=${token}`;
 
     await this.mailerService.sendMail({
       to: user.email,
       from: 'Test <test@gmail.com>',
-      subject: 'Change your Password',
+      subject: 'Reset your Password',
       template: './changePassword',
       context: {
         name: user.firstName,

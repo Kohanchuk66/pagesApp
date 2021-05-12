@@ -7,7 +7,6 @@ import {
   HttpStatus,
   Param,
   Post,
-  UploadedFile,
   UseGuards,
   UseInterceptors,
   ValidationPipe,
@@ -16,9 +15,6 @@ import { UsersService } from '../users/users.service';
 import { LoginDTO, RegisterDTO } from './dto/auth.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import * as uniqid from 'uniqid';
 import * as crypto from 'crypto';
 import { MailService } from '../mail/mail.service';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
@@ -112,7 +108,7 @@ export class AuthController {
     await user.save({ validateBeforeSave: false });
     try {
       await this.mailService.sendChangePasswordEmail(user, resetToken);
-      return { message: 'Token send to email' };
+      return { message: 'Confirming message has been sent to the email' };
     } catch (err) {
       user.passwordResetToken = undefined;
       user.passwordResetExpires = undefined;
