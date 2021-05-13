@@ -105,10 +105,7 @@ export class AuthController {
     const user = await this.userService.findByEmail(forgotPasswordDto.email);
     if (!user) throw new HttpException('Invalid email', HttpStatus.BAD_REQUEST);
     const resetToken = crypto.randomBytes(32).toString('hex');
-    user.passwordResetToken = crypto
-      .createHash('sha256')
-      .update(resetToken)
-      .digest('hex');
+    user.passwordResetToken = resetToken;
     user.passwordResetExpires = Date.now() + 10 * 60 * 1000;
     await user.save({ validateBeforeSave: false });
     try {
@@ -144,6 +141,7 @@ export class AuthController {
   async googleLogin(
     @Body() userDTO: GoogleUserDTO,
   ): Promise<Record<string, any>> {
+    // const decodedToken = jwt_decode()
     let user;
     user = await this.userService.findByEmail(userDTO.email);
     if (!user) {
