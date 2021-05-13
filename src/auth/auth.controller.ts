@@ -161,6 +161,6 @@ export class AuthController {
 
   @Get('/reset/:token')
   async checkToken(@Param('token') token: string): Promise<void> {
-    const user = this.userService.findByResetToken(token, Date.now());
+    const user = await this.userService.findByResetToken(token, Date.now());
   }
 }

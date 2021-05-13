@@ -123,7 +123,7 @@ export class UsersService {
       { userId: user._id },
       this.configService.get('JWT_SECRET'),
       {
-        expiresIn: '10m',
+        expiresIn: '10d',
       },
     );
     return { resetToken };
