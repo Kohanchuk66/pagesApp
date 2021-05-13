@@ -155,4 +155,12 @@ export class AuthController {
     const responseUser = new responseUserDto(user);
     return { user: responseUser, token, message: 'Login successfully' };
   }
+
+  @Get('/reset/:token')
+  async checkToken(
+    @Param('token') token: string,
+  ): Promise<Record<string, any>> {
+    const user = this.userService.findByResetToken(token, Date.now())
+    return { status: HttpStatus.OK };
+  }
 }
