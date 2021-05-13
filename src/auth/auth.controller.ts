@@ -90,8 +90,11 @@ export class AuthController {
   @Get('/confirm/:token')
   async confirm(@Param('token') token: string): Promise<string> {
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-    const user = this.userService.findByResetToken(hashedToken, Date.now());
-
+    const user = await this.userService.findByResetToken(
+      hashedToken,
+      Date.now(),
+    );
+    await user.save();
     return 'User confirmed<script>setTimeout(() => window.close(), 2000);</script>';
   }
 
@@ -157,10 +160,7 @@ export class AuthController {
   }
 
   @Get('/reset/:token')
-  async checkToken(
-    @Param('token') token: string,
-  ): Promise<Record<string, any>> {
-    const user = this.userService.findByResetToken(token, Date.now())
-    return { status: HttpStatus.OK };
+  async checkToken(@Param('token') token: string): Promise<void> {
+    const user = this.userService.findByResetToken(token, Date.now());
   }
 }
