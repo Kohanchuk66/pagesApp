@@ -94,24 +94,39 @@ export class UsersService {
     user.confirmed = true;
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
-    user.save({ validateBeforeSave: false });
     return user;
   }
 
   async changePassword(
-    user: User,
+    token,
+    resetExpires,
     changePasswordDto,
   ): Promise<Record<string, any>> {
+    const user = await this.userModel.findOne({
+      passwordResetToken: token,
+      passwordResetExpires: { $gt: resetExpires },
+    });
+    if (!user)
+      throw new HttpException(
+        'Token is invalid or has expired',
+        HttpStatus.BAD_REQUEST,
+      );
+    user.confirmed = true;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
     user.password = changePasswordDto.password;
     user.passwordResetToken = null;
     user.passwordResetExpires = null;
 
     await user.save({ validateBeforeSave: false });
-
-    const token = jwt.sign(user._id, this.configService.get('JWT_SECRET'), {
-      expiresIn: this.configService.get('JWT_EXPIRES_IN'),
-    });
-    return { token };
+    const resetToken = jwt.sign(
+      { userId: user._id },
+      this.configService.get('JWT_SECRET'),
+      {
+        expiresIn: '10m',
+      },
+    );
+    return { resetToken };
   }
 
   async createGoogleUser(userDTO: GoogleUserDTO): Promise<User> {

@@ -128,12 +128,12 @@ export class AuthController {
     @Body() changePasswordDto: ChangePasswordDto,
   ): Promise<Record<string, any>> {
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-    const user = await this.userService.findByResetToken(
+
+    return this.userService.changePassword(
       hashedToken,
       Date.now(),
+      changePasswordDto,
     );
-
-    return this.userService.changePassword(user, changePasswordDto);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
